@@ -301,32 +301,16 @@ async def run_bot():
     )
 
     conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^Get Instagram Account$"), create_request)],
+        entry_points=[
+            MessageHandler(filters.Regex("^Get Instagram Account$"), create_request)
+        ],
         states={
-            GET_EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_email)],
-            GET_CODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_code)],
-        },
-        fallbacks=[CommandHandler("cancel", cancel)],
-    )
-
-    for handler in [CommandHandler("start", start), conv]:
-        app.add_handler(handler)
-
-    logger.info("Initializing...")
-    async def run_bot():
-    app = (
-        ApplicationBuilder()
-        .token(BOT_TOKEN)
-        .connect_timeout(30)
-        .read_timeout(30)
-        .build()
-    )
-
-    conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^Get Instagram Account$"), create_request)],
-        states={
-            GET_EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_email)],
-            GET_CODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_code)],
+            GET_EMAIL: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_email)
+            ],
+            GET_CODE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_code)
+            ],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
@@ -336,8 +320,7 @@ async def run_bot():
 
     logger.info("Bot is starting...")
 
-    # ✅ CORRECT for python-telegram-bot v20+
     await app.run_polling(drop_pending_updates=True)
-
+    
 if __name__ == "__main__":
     asyncio.run(run_bot())
