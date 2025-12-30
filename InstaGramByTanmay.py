@@ -321,6 +321,7 @@ async def run_bot():
     logger.info("Bot is starting...")
 
     await app.run_polling(drop_pending_updates=True)
-    
+
+
 if __name__ == "__main__":
     asyncio.run(run_bot())
