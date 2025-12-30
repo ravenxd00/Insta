@@ -313,19 +313,31 @@ async def run_bot():
         app.add_handler(handler)
 
     logger.info("Initializing...")
-    await app.initialize()
-    await app.start()
+    async def run_bot():
+    app = (
+        ApplicationBuilder()
+        .token(BOT_TOKEN)
+        .connect_timeout(30)
+        .read_timeout(30)
+        .build()
+    )
 
-    logger.info("Bot is active!")
-    await app.updater.start_polling(drop_pending_updates=True)
+    conv = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex("^Get Instagram Account$"), create_request)],
+        states={
+            GET_EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_email)],
+            GET_CODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_code)],
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
+    )
 
-    try:
-        while True:
-            await asyncio.sleep(1)
-    finally:
-        await app.updater.stop()
-        await app.stop()
-        await app.shutdown()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(conv)
+
+    logger.info("Bot is starting...")
+
+    # ✅ CORRECT for python-telegram-bot v20+
+    await app.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
     asyncio.run(run_bot())
