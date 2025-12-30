@@ -318,10 +318,20 @@ async def run_bot():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(conv)
 
-    logger.info("Bot is starting...")
+    logger.info("Initializing...")
+    await app.initialize()
+    await app.start()
 
-    await app.run_polling(drop_pending_updates=True)
+    logger.info("Bot is active!")
+    await app.updater.start_polling(drop_pending_updates=True)
 
+    try:
+        while True:
+            await asyncio.sleep(1)
+    finally:
+        await app.updater.stop()
+        await app.stop()
+        await app.shutdown()
 
 if __name__ == "__main__":
     asyncio.run(run_bot())
